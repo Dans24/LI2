@@ -33,6 +33,25 @@ int posicao_ocupada(ESTADO e, int x, int y){
 	return tem_objeto(e, x, y) && posicao_valida(x, y);
 }
 
+int a_volta(STATS p, int x, int y){
+	if(p.x >= x - 1 && p.x <= x + 1 && p.y >= y - 1 && p.y <= y + 1)
+		return 1;
+	return 0;
+}
+
+int num_a_volta(ESTADO e,int x, int y){
+	int tipo;
+	int i;
+	int c = 0;
+	for(tipo = 0; tipo < NUM_OBJECTOS; tipo++){
+		for(i = 0; i < e.num[tipo]; i++){
+			if(a_volta(e.obj[tipo][i], x, y))
+				c++;
+		}
+	}
+	return c;
+}
+
 void imprime_casa(int x, int y) {
 	int i = 1 + random() % 4;
 	QUADRADO_BG(x, y, ESCALA, i);
@@ -48,7 +67,7 @@ ESTADO inicializar_objeto(ESTADO e,int tipo){
 	do {
 		X = random() % TAM;
 		Y = random() % TAM;
-	} while (posicao_ocupada(e, X, Y));
+	} while (posicao_ocupada(e, X, Y) || num_a_volta(e, X, Y) > 2);
 	e.obj[tipo][(int) e.num[tipo]].x = X;
 	e.obj[tipo][(int) e.num[tipo]].y = Y;
 	e.num[tipo]++;
