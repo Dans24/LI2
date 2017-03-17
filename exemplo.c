@@ -34,9 +34,12 @@ int posicao_ocupada(ESTADO e, int x, int y){
 }
 
 void imprime_casa(int x, int y) {
-	char *cor[] = {"#666600", "#555500"};
-	int idx = (x + y) % 2;
-	QUADRADO(x, y,ESCALA, cor[idx]);
+	int i = 1 + random() % 4;
+	QUADRADO_BG(x, y, ESCALA, i);
+}
+
+void imprime_mov(int x, int y) {
+	QUADRADO(x, y, ESCALA, "transparent");
 }
 
 ESTADO inicializar_objeto(ESTADO e,int tipo){
@@ -84,7 +87,7 @@ void imprime_movimento(ESTADO e, int dx, int dy) {
 	novo.obj[JOGADOR][0].y = y;
 	sprintf(link, "http://localhost/cgi-bin/exemplo?%s", estado2str(novo));
 	ABRIR_LINK(link);
-	imprime_casa(x, y);
+	imprime_mov(x, y);
 	FECHAR_LINK;
 }
 
@@ -108,23 +111,26 @@ ESTADO ler_estado(char *args) {
 
 void imprime_objetos(ESTADO e,int tipo) {
 	int i;
+	char* img[NUM_OBJECTOS][20];
+	int img_length[NUM_OBJECTOS] = {1,1,3};
+	img[JOGADOR][0] = "Minotaur05_DD.png";
+	img[INIMIGO][0] =  "Driders_04.png";
+	img[OBSTACULO][0] = "barrel.png";
+	img[OBSTACULO][1] = "box1.png";
+	img[OBSTACULO][2] = "box2.png";
 	for(i = 0; i < e.num[tipo]; i ++) {
-		if(tipo == JOGADOR)
-			IMAGEM(e.obj[tipo][i].x, e.obj[tipo][i].y, ESCALA, "Minotaur05_DD.png");
-		if(tipo == INIMIGO)
-			IMAGEM(e.obj[tipo][i].x, e.obj[tipo][i].y, ESCALA, "Driders_04.png");
-		if(tipo == OBSTACULO)
-			IMAGEM(e.obj[tipo][i].x, e.obj[tipo][i].y, ESCALA, "lava_pool1.png");
+			IMAGEM(e.obj[tipo][i].x, e.obj[tipo][i].y, ESCALA, img[tipo][random() % img_length[tipo]]);
 	}
 }
 
 int main() {
-	srandom(time(NULL));
 	int x, y;
+	srandom(time(NULL));
 	ESTADO e = ler_estado(getenv("QUERY_STRING"));
 
 	COMECAR_HTML;
 	ABRIR_SVG(600, 600);
+	srandom(1);
 	for(y = 0; y < TAM; y++)
 		for(x = 0; x < TAM; x++)
 			imprime_casa(x, y);

@@ -10,15 +10,15 @@ Definição do estado e das funções que convertem estados em strings e vice-ve
 #define MAX_OBJ						100
 
 /** \brief O nº de tipos de objetos no jogo */
-#define NUM_OBJECTOS					3
+#define NUM_OBJECTOS			4
 
 /** \brief Indíce do jogador */
 #define JOGADOR						0
 
-/** \brief Índice dos obstaculos */
+/** \brief Índice dos inimigos */
 #define INIMIGO						1
 
-/** \brief Índice dos inimigos */
+/** \brief Índice dos obstaculos */
 #define OBSTACULO					2
 
 /**

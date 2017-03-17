@@ -36,8 +36,18 @@ Macros úteis para gerar CGIs
 @param ESCALA A escala da imagem
 @param FICHEIRO O caminho para o link do ficheiro
 */
-#define IMAGEM(X, Y, ESCALA, FICHEIRO)		printf("<image x=%d y=%d width=%d height=%d xlink:href=%s />\n", \
-												ESCALA * X, ESCALA* Y, ESCALA, ESCALA, IMAGE_PATH FICHEIRO)
+#define IMAGEM(X, Y, ESCALA, FICHEIRO)		printf("<image x=%d y=%d width=%d height=%d xlink:href=%s%s />\n", \
+												ESCALA * X, ESCALA* Y, ESCALA, ESCALA, IMAGE_PATH, FICHEIRO)
+
+/**
+\brief Macro para criar um quadrado
+@param X A coordenada X do canto superior esquerdo
+@param Y A coordenada Y do canto superior esquerdo
+@param ESCALA A escala do quadrado
+@param INDICE O índice da imagem de preenchimento do quadrado
+*/
+#define QUADRADO_BG(X, Y, ESCALA, INDICE)	printf("<image x=%d y=%d width=%d height=%d xlink:href=%stile%d.png />\n", \
+												ESCALA * X, ESCALA* Y, ESCALA, ESCALA, IMAGE_PATH, INDICE)
 
 /**
 \brief Macro para criar um quadrado
@@ -46,7 +56,7 @@ Macros úteis para gerar CGIs
 @param ESCALA A escala do quadrado
 @param COR A cor de preenchimento do quadrado
 */
-#define QUADRADO(X, Y, ESCALA, COR)			printf("<rect x=%d y=%d width=%d height=%d fill=%s />\n", \
+#define QUADRADO(X, Y, ESCALA, COR)	printf("<image x=%d y=%d width=%d height=%d fill=%s />\n", \
 												ESCALA * X, ESCALA* Y, ESCALA, ESCALA, COR)
 
 /**

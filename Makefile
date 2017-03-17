@@ -5,6 +5,9 @@ install: exemplo
 	sudo cp exemplo /usr/lib/cgi-bin
 	touch install
 
+images:
+	sudo cp ./images/* /var/www/html/images
+
 exemplo: exemplo.o estado.o
 	cc -o exemplo exemplo.o estado.o
 
