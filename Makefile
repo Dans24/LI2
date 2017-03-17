@@ -1,9 +1,22 @@
 CFLAGS=-Wall
+FICHEIROS=cgi.h estado.c estado.h exemplo.c Makefile
 
-install: jogo
-	sudo cp jogo /usr/lib/cgi-bin/
-	sudo cp pacman.png /var/www/html/images
-	touch jogo
+install: exemplo
+	sudo cp exemplo /usr/lib/cgi-bin
+	touch install
 
-jogo: main.o jogo.o
-	cc -o jogo main.o jogo.o
+exemplo: exemplo.o estado.o
+	cc -o exemplo exemplo.o estado.o
+
+exemplo.zip: $(FICHEIROS)
+	zip -9 exemplo.zip $(FICHEIROS)
+
+doc:
+	doxygen -g
+	doxygen
+
+clean:
+	rm -rf *.o exemplo Doxyfile latex html install
+
+estado.o: estado.c estado.h
+exemplo.o: exemplo.c cgi.h estado.h
