@@ -27,10 +27,7 @@ Definição do estado e das funções que convertem estados em strings e vice-ve
 typedef struct stats {
 	char x;
 	char y;
-	char hp;
-	char mhp;
-	char str;
-	char def;
+	char dir;
 	char type;
 } STATS;
 

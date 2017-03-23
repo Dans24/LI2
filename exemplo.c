@@ -8,6 +8,7 @@
 #define MAX_BUFFER		10240
 #define TAM						11
 #define ESCALA				50
+#define OFFSET				50
 
 int posicao_valida(int x, int y) {
 	return x >= 0 && y >= 0 && x < TAM && y < TAM;
@@ -15,6 +16,22 @@ int posicao_valida(int x, int y) {
 
 int posicao_igual(STATS p, int x, int y){
 	return p.x == x && p.y == y;
+}
+
+int posicao_porta(int x,int y) {
+	int porta_esquerda = x == 0 && y == (TAM / 2);
+	int porta_direita = x == (TAM - 1) && y == (TAM / 2);
+	int porta_cima = x == (TAM/2) && y == 0;
+	int porta_baixo = x == (TAM/2) && y == (TAM - 1);
+	return porta_baixo || porta_cima || porta_direita || porta_esquerda;
+}
+
+int ir_porta(int x, int y) {
+	int porta_esquerda = x == -1 && y == (TAM/2);
+	int porta_direita = x == TAM && y == (TAM/2);
+	int porta_cima = x == (TAM/2) && y == -1;
+	int porta_baixo = x == (TAM/2) && y == TAM;
+	return porta_baixo || porta_cima || porta_direita || porta_esquerda;
 }
 
 int tem_objeto(ESTADO e,int x, int y){
@@ -53,8 +70,16 @@ int num_a_volta(ESTADO e,int x, int y){
 }
 
 void imprime_casa(int x, int y) {
-	int i = 1 + random() % 4;
+	int i = 1 + random() % 8;         //nr tiles
 	QUADRADO_BG(x, y, ESCALA, i);
+}
+
+void imprime_portas() {
+	int meio = TAM/2;
+	QUADRADO(-1,meio,ESCALA,"yellow");
+	QUADRADO(TAM,meio,ESCALA,"yellow");
+	QUADRADO(meio,-1,ESCALA,"yellow");
+	QUADRADO(meio,TAM,ESCALA,"yellow");
 }
 
 void imprime_mov(int x, int y) {
@@ -67,7 +92,7 @@ ESTADO inicializar_objeto(ESTADO e,int tipo){
 	do {
 		X = random() % TAM;
 		Y = random() % TAM;
-	} while (posicao_ocupada(e, X, Y) || num_a_volta(e, X, Y) > 2);
+	} while (posicao_ocupada(e, X, Y) || num_a_volta(e, X, Y) > 2 || posicao_porta(X, Y));
 	e.obj[tipo][(int) e.num[tipo]].x = X;
 	e.obj[tipo][(int) e.num[tipo]].y = Y;
 	e.num[tipo]++;
@@ -96,15 +121,18 @@ void imprime_movimento(ESTADO e, int dx, int dy) {
 	ESTADO novo = e;
 	int x = e.obj[JOGADOR][0].x + dx;
 	int y = e.obj[JOGADOR][0].y + dy;
-	char link[MAX_BUFFER];
-	if(!posicao_valida(x, y))
-		return;
-	if(posicao_ocupada(e, x, y))
-		return;
-
+	char link[MAX_BUFFER] = "?";
+	if(!ir_porta(x, y)){
+		if(!posicao_valida(x, y))
+			return;
+		if(posicao_ocupada(e, x, y))
+			return;
+	}
 	novo.obj[JOGADOR][0].x = x;
 	novo.obj[JOGADOR][0].y = y;
-	sprintf(link, "http://localhost/cgi-bin/exemplo?%s", estado2str(novo));
+	if(!ir_porta(x, y)){
+		sprintf(link, "?%s", estado2str(novo));
+	}
 	ABRIR_LINK(link);
 	imprime_mov(x, y);
 	FECHAR_LINK;
@@ -122,9 +150,9 @@ void imprime_movimentos(ESTADO e) {
 	}
 }
 
-ESTADO ler_estado(char *args) {
+ESTADO ler_estado(char* args) {
 	if(strlen(args) == 0)
-		return inicializar();
+			return inicializar();
 	return str2estado(args);
 }
 
@@ -148,8 +176,9 @@ int main() {
 	ESTADO e = ler_estado(getenv("QUERY_STRING"));
 
 	COMECAR_HTML;
-	ABRIR_SVG(600, 600);
+	ABRIR_SVG(650, 650);
 	srandom(1);
+	imprime_portas();
 	for(y = 0; y < TAM; y++)
 		for(x = 0; x < TAM; x++)
 			imprime_casa(x, y);
